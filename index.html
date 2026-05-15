@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Bilal - AI Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neonCyan: '#00f3ff',
+                        neonPurple: '#bc13fe',
+                        darkBg: '#050505',
+                        glassBg: 'rgba(255, 255, 255, 0.03)',
+                        glassBorder: 'rgba(255, 255, 255, 0.08)'
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: .5 }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(20, 20, 25, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 243, 255, 0.1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #00f3ff, #bc13fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .neon-button {
+            position: relative;
+            background: transparent;
+            color: white;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #00f3ff, #bc13fe);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .neon-button:hover::before {
+            opacity: 1;
+        }
+
+        .neon-button:hover {
+            border-color: transparent;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        .neon-button-outline {
+            position: relative;
+            background: transparent;
+            color: white;
+            border: 1px solid #00f3ff;
+            transition: all 0.3s ease;
+        }
+
+        .neon-button-outline:hover {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5) inset, 0 0 15px rgba(0, 243, 255, 0.5);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        /* Mesh background */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            background-color: #050505;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.08), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(188, 19, 254, 0.08), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 243, 255, 0.05), transparent 40%);
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #00f3ff, #bc13fe);
+        }
+
+        .profile-glow {
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.3), inset 0 0 20px rgba(188, 19, 254, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mesh-bg"></div>
+    <div class="grid-overlay"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Polyfill/Check for framer motion
+        const FM = window.Motion || window.FramerMotion;
+        const { motion, AnimatePresence } = FM;
+        const { useState, useEffect, useRef } = React;
+
+        // Typwritter effect component
+        const TypewriterEffect = ({ texts }) => {
+            const [displayText, setDisplayText] = useState('');
+            const [index, setIndex] = useState(0);
+            const [isDeleting, setIsDeleting] = useState(false);
+
+            useEffect(() => {
+                const currentText = texts[index % texts.length];
+
+                const typeSpeed = isDeleting ? 30 : 80;
+
+                const timer = setTimeout(() => {
+                    if (!isDeleting && displayText === currentText) {
+                        setTimeout(() => setIsDeleting(true), 2000);
+                    } else if (isDeleting && displayText === '') {
+                        setIsDeleting(false);
+                        setIndex(i => i + 1);
+                    } else {
+                        setDisplayText(currentText.substring(0, displayText.length + (isDeleting ? -1 : 1)));
+                    }
+                }, typeSpeed);
+
+                return () => clearTimeout(timer);
+            }, [displayText, isDeleting, index, texts]);
+
+            return (
+                <span className="text-xl md:text-2xl font-light text-gray-300 min-h-[32px] block">
+                    {displayText}
+                    <motion.span
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 0.8 }}
+                        className="inline-block ml-1 w-[2px] h-[1em] bg-neonCyan align-middle"
+                    />
+                </span>
+            );
+        };
+
+        // Floating Particles Background
+        const FloatingParticles = () => {
+            const [particles, setParticles] = useState([]);
+            useEffect(() => {
+                const particleCount = 40;
+                const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
+                    id: i,
+                    x: Math.random() * 100,
+                    y: Math.random() * 100,
+                    size: Math.random() * 3 + 1,
+                    duration: Math.random() * 20 + 10,
+                    delay: Math.random() * 5
+                }));
+                setParticles(newParticles);
+            }, []);
+
+            return (
+                <div className="particles">
+                    {particles.map(p => (
+                        <motion.div
+                            key={p.id}
+                            className="particle"
+                            style={{
+                                width: p.size,
+                                height: p.size,
+                                left: `${p.x}vw`,
+                                top: `${p.y}vh`,
+                            }}
+                            animate={{
+                                y: ['-10vh', '110vh'],
+                                x: [`${p.x}vw`, `${p.x + (Math.random() * 10 - 5)}vw`],
+                                opacity: [0, 0.5, 0]
+                            }}
+                            transition={{
+                                duration: p.duration,
+                                repeat: Infinity,
+                                delay: p.delay,
+                                ease: "linear"
+                            }}
+                        />
+                    ))}
+                </div>
+            );
+        };
+
+        const Navigation = () => {
+            return (
+                <motion.nav
+                    initial={{ y: -100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="fixed top-0 left-0 right-0 z-50 py-6 px-8 flex justify-between items-center glass-panel border-x-0 border-t-0 border-b border-white/5 rounded-none backdrop-blur-xl"
+                >
+                    <div className="text-2xl font-bold font-outfit tracking-wider text-white">
+                        MB<span className="text-neonCyan">.</span>
+                    </div>
+                    <div className="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
+                        <a href="#about" className="text-gray-300 hover:text-white transition-colors hover:text-neonCyan">About</a>
+                        <a href="#skills" className="text-gray-300 hover:text-white transition-colors hover:text-neonCyan">Skills</a>
+                        <a href="#education" className="text-gray-300 hover:text-white transition-colors hover:text-neonCyan">Education</a>
+                        <a href="#projects" className="text-gray-300 hover:text-white transition-colors hover:text-neonCyan">Projects</a>
+                        <a href="#experience" className="text-gray-300 hover:text-white transition-colors hover:text-neonCyan">Experience</a>
+                    </div>
+                    <a href="#contact" className="neon-button-outline px-6 py-2 rounded-full text-sm font-semibold tracking-wide">
+                        Hire Me
+                    </a>
+                </motion.nav>
+            );
+        };
+
+        const Hero = () => {
+            return (
+                <section className="min-h-screen flex items-center justify-center relative pt-20 overflow-hidden" id="home">
+                    {/* Glowing blobs */}
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neonCyan/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neonPurple/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob" style={{ animationDelay: '2s' }}></div>
+
+                    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="space-y-6"
+                        >
+                            <div className="inline-block px-4 py-1.5 rounded-full border border-neonCyan/30 bg-neonCyan/10 text-neonCyan text-sm font-medium mb-4 backdrop-blur-sm">
+                                <i className="fas fa-sparkles mr-2"></i> Open to Opportunities
+                            </div>
+                            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+                                Hi, I'm <br />
+                                <span className="text-gradient">Muhammad Bilal</span>
+                            </h1>
+
+                            <TypewriterEffect texts={[
+                                "AI Student",
+                                "Future Tech Innovator",
+                                "Operations Support Enthusiast"
+                            ]} />
+
+                            <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl font-light">
+                                Passionate Artificial Intelligence student focused on technology, communication, operations support, and digital innovation. Dedicated to continuous learning, professional growth, and building impactful modern solutions.
+                            </p>
+
+                            <div className="flex flex-wrap gap-4 pt-4">
+                                <a href="#contact" className="neon-button px-8 py-3 rounded-full font-semibold flex items-center gap-2">
+                                    <i className="fas fa-envelope"></i> Contact Me
+                                </a>
+                                <a href="#" className="neon-button-outline px-8 py-3 rounded-full font-semibold flex items-center gap-2">
+                                    <i className="fas fa-download"></i> Download Resume
+                                </a>
+                                <a href="#skills" className="glass-panel px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center gap-2">
+                                    <i className="fas fa-compass"></i> Explore Portfolio
+                                </a>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                            className="relative flex justify-center items-center h-[500px]"
+                        >
+                            {/* Profile Image Container */}
+                            <div className="relative w-72 h-72 md:w-96 md:h-96 animate-float z-10">
+                                <div className="absolute inset-0 rounded-full border-2 border-neonCyan/50 profile-glow animate-[spin_10s_linear_infinite] border-dashed"></div>
+                                <div className="absolute inset-2 rounded-full border border-neonPurple/50 animate-[spin_15s_linear_infinite_reverse]"></div>
+                                <div className="absolute inset-4 rounded-full overflow-hidden bg-gray-900 border-4 border-darkBg shadow-[0_0_30px_rgba(0,243,255,0.2)]">
+                                    {/* Placeholder for Profile Image */}
+                                    <img
+                                        src="profile.jpg"
+                                        alt="Muhammad Bilal"
+                                        className="w-full h-full object-cover transition-all duration-500"
+                                        onError={(e) => {
+                                            e.target.src = 'https://via.placeholder.com/400x400/111/fff?text=MB';
+                                        }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-neonCyan/20 to-transparent mix-blend-overlay"></div>
+                                </div>
+                            </div>
+
+                            {/* Floating decorative elements */}
+                            <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-10 right-10 glass-panel p-4 rounded-xl flex items-center gap-3 z-20">
+                                <i className="fas fa-brain text-neonPurple text-2xl"></i>
+                                <div>
+                                    <p className="text-xs text-gray-400">Major</p>
+                                    <p className="text-sm font-bold">AI Student</p>
+                                </div>
+                            </motion.div>
+
+                            <motion.div animate={{ y: [10, -10, 10] }} transition={{ duration: 5, repeat: Infinity }} className="absolute bottom-10 left-10 glass-panel p-4 rounded-xl flex items-center gap-3 z-20">
+                                <i className="fas fa-chart-line text-neonCyan text-2xl"></i>
+                                <div>
+                                    <p className="text-xs text-gray-400">Focus</p>
+                                    <p className="text-sm font-bold">Operations Support</p>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    </div>
+                </section>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle }) => (
+            <div className="text-center mb-16">
+                <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-3xl md:text-5xl font-bold mb-4 font-outfit"
+                >
+                    {title}
+                </motion.h2>
+                <motion.div
+                    initial={{ opacity: 0, width: 0 }}
+                    whileInView={{ opacity: 1, width: "100px" }}
+                    viewport={{ once: true }}
+                    className="h-1 bg-gradient-to-r from-neonCyan to-neonPurple mx-auto mb-6 rounded-full"
+                ></motion.div>
+                {subtitle && (
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        className="text-gray-400 max-w-2xl mx-auto"
+                    >
+                        {subtitle}
+                    </motion.p>
+                )}
+            </div>
+        );
+
+        const About = () => {
+            return (
+                <section className="py-24 relative z-10" id="about">
+                    <div className="max-w-6xl mx-auto px-6">
+                        <SectionHeader title="About Me" subtitle="A brief introduction to who I am and what drives me." />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <motion.div
+                                initial={{ opacity: 0, x: -50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                className="glass-panel p-8 rounded-2xl relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neonCyan to-transparent"></div>
+                                <h3 className="text-2xl font-bold mb-4 text-white">The Journey</h3>
+                                <p className="text-gray-300 leading-relaxed mb-4">
+                                    I am currently a dedicated BS Artificial Intelligence student in my Second Semester. My academic journey is fueled by a profound interest in how technology, particularly AI, intersects with practical operations and administrative support.
+                                </p>
+                                <p className="text-gray-300 leading-relaxed">
+                                    Beyond the code, I possess strong communication and coordination skills. I believe that professional mindset and discipline are just as crucial as technical abilities. I am constantly seeking opportunities to learn, improve, and apply my skills to real-world challenges.
+                                </p>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, x: 50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                className="grid grid-cols-2 gap-6"
+                            >
+                                {[
+                                    { icon: "fa-graduation-cap", title: "BS-AI Student", desc: "2nd Semester" },
+                                    { icon: "fa-comments", title: "Communication", desc: "Strong Interpersonal Skills" },
+                                    { icon: "fa-tasks", title: "Operations", desc: "Support & Coordination" },
+                                    { icon: "fa-lightbulb", title: "Mindset", desc: "Professional & Disciplined" }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="glass-panel p-6 rounded-xl flex flex-col items-center text-center hover:-translate-y-2 transition-transform duration-300">
+                                        <i className={`fas ${item.icon} text-3xl mb-4 text-neonCyan`}></i>
+                                        <h4 className="font-bold text-white mb-2">{item.title}</h4>
+                                        <p className="text-xs text-gray-400">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </motion.div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Skills = () => {
+            const skills = [
+                { name: "Artificial Intelligence Student", icon: "fa-brain" },
+                { name: "Communication Skills", icon: "fa-comments" },
+                { name: "Client Handling", icon: "fa-users" },
+                { name: "Scheduling & Coordination", icon: "fa-calendar-alt" },
+                { name: "Administrative Support", icon: "fa-file-alt" },
+                { name: "Documentation & Record Keeping", icon: "fa-folder-open" },
+                { name: "Basic CRM Knowledge", icon: "fa-database" },
+                { name: "Time Management", icon: "fa-clock" },
+                { name: "Problem Solving", icon: "fa-puzzle-piece" },
+                { name: "Team Collaboration", icon: "fa-people-carry" },
+                { name: "Professional Communication", icon: "fa-handshake" }
+            ];
+
+            return (
+                <section className="py-24 relative z-10" id="skills">
+                    <div className="max-w-6xl mx-auto px-6">
+                        <SectionHeader title="Core Competencies" subtitle="Skills and abilities I bring to the table." />
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {skills.map((skill, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className="glass-panel p-6 rounded-xl flex flex-col items-center justify-center text-center group hover:bg-white/5"
+                                >
+                                    <div className="w-14 h-14 rounded-full bg-darkBg border border-gray-800 flex items-center justify-center mb-4 group-hover:border-neonCyan transition-colors duration-300 group-hover:shadow-[0_0_15px_rgba(0,243,255,0.3)]">
+                                        <i className={`fas ${skill.icon} text-xl text-gray-400 group-hover:text-neonCyan transition-colors duration-300`}></i>
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors duration-300">{skill.name}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Education = () => {
+            const eduData = [
+                {
+                    degree: "Bachelor of Artificial Intelligence (BS-AI)",
+                    status: "Second Semester",
+                    institution: "Pak-Austria Fachhochschule Institute of Applied Sciences and Technology (PAF-IAST)",
+                    location: "Haripur, Pakistan",
+                    year: "Current",
+                    icon: "fa-robot"
+                },
+                {
+                    degree: "FSc Computer Science",
+                    status: "Completed",
+                    institution: "Federal Board (FBISE)",
+                    location: "Pakistan",
+                    year: "2025",
+                    icon: "fa-laptop-code"
+                },
+                {
+                    degree: "Matric Science",
+                    status: "Completed",
+                    institution: "Federal Board (FBISE)",
+                    location: "Pakistan",
+                    year: "2023",
+                    icon: "fa-book"
+                }
+            ];
+
+            return (
+                <section className="py-24 relative z-10" id="education">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <SectionHeader title="Academic Journey" subtitle="My educational background and foundational knowledge." />
+
+                        <div className="relative border-l border-white/10 ml-6 md:ml-0 md:pl-0">
+                            {eduData.map((edu, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, x: -50 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.2 }}
+                                    className="mb-12 relative pl-8 md:pl-0"
+                                >
+                                    {/* Timeline dot */}
+                                    <div className="absolute left-[-5px] md:left-1/2 md:transform md:-translate-x-1/2 w-3 h-3 bg-neonPurple rounded-full shadow-[0_0_10px_#bc13fe]"></div>
+
+                                    <div className={`md:w-[45%] ${index % 2 === 0 ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'}`}>
+                                        <div className="glass-panel p-6 rounded-2xl relative group overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-neonPurple/0 to-neonPurple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                            <div className="flex justify-between items-start mb-4 relative z-10">
+                                                <div>
+                                                    <span className="text-neonPurple text-xs font-bold tracking-wider uppercase mb-2 block">{edu.year}</span>
+                                                    <h3 className="text-xl font-bold text-white mb-1">{edu.degree}</h3>
+                                                    <p className="text-neonCyan text-sm font-medium">{edu.status}</p>
+                                                </div>
+                                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-neonPurple transition-colors">
+                                                    <i className={`fas ${edu.icon}`}></i>
+                                                </div>
+                                            </div>
+
+                                            <div className="relative z-10 text-gray-400 text-sm">
+                                                <p className="mb-1 font-medium text-gray-300">{edu.institution}</p>
+                                                <p className="flex items-center gap-1 opacity-70">
+                                                    <i className="fas fa-map-marker-alt text-xs"></i> {edu.location}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const ExperienceAndStrengths = () => {
+            const experiences = [
+                "Professional communication through calls and messaging platforms",
+                "Handling queries and providing information support",
+                "Coordination and scheduling assistance",
+                "Record management and documentation",
+                "Understanding basic CRM concepts",
+                "Workplace professionalism and discipline"
+            ];
+
+            const strengths = [
+                { name: "Dependable & Consistent", icon: "fa-shield-alt" },
+                { name: "Quick Learner", icon: "fa-bolt" },
+                { name: "Responsible & Punctual", icon: "fa-check-circle" },
+                { name: "Positive Attitude", icon: "fa-smile" },
+                { name: "Professional Ethics", icon: "fa-briefcase" },
+                { name: "Fast Adaptability", icon: "fa-sync-alt" }
+            ];
+
+            return (
+                <section className="py-24 relative z-10" id="experience">
+                    <div className="max-w-6xl mx-auto px-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+                            {/* Experience Block */}
+                            <div>
+                                <h3 className="text-3xl font-bold mb-8 font-outfit flex items-center gap-3">
+                                    <i className="fas fa-briefcase text-neonCyan"></i> Practical Exposure
+                                </h3>
+                                <div className="space-y-4">
+                                    {experiences.map((exp, index) => (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: index * 0.1 }}
+                                            className="glass-panel p-5 rounded-xl flex items-start gap-4 hover:border-neonCyan/50 transition-colors"
+                                        >
+                                            <div className="mt-1 w-6 h-6 rounded-full bg-neonCyan/10 flex items-center justify-center flex-shrink-0 border border-neonCyan/30">
+                                                <i className="fas fa-check text-neonCyan text-xs"></i>
+                                            </div>
+                                            <p className="text-gray-300 leading-relaxed">{exp}</p>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Strengths & Info Block */}
+                            <div>
+                                <h3 className="text-3xl font-bold mb-8 font-outfit flex items-center gap-3">
+                                    <i className="fas fa-star text-neonPurple"></i> Personal Strengths
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+                                    {strengths.map((strength, index) => (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: index * 0.1 }}
+                                            className="glass-panel p-4 rounded-xl flex items-center gap-3 group hover:bg-white/5"
+                                        >
+                                            <i className={`fas ${strength.icon} text-gray-400 group-hover:text-neonPurple transition-colors`}></i>
+                                            <span className="text-sm font-medium text-gray-200">{strength.name}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        className="glass-panel p-6 rounded-xl border-l-4 border-l-neonCyan"
+                                    >
+                                        <h4 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Languages</h4>
+                                        <ul className="space-y-2">
+                                            <li className="flex justify-between items-center text-sm">
+                                                <span className="text-white">English</span>
+                                                <span className="text-neonCyan text-xs">Good (Spoken/Written)</span>
+                                            </li>
+                                            <li className="flex justify-between items-center text-sm">
+                                                <span className="text-white">Urdu</span>
+                                                <span className="text-neonCyan text-xs">Native</span>
+                                            </li>
+                                        </ul>
+                                    </motion.div>
+
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        className="glass-panel p-6 rounded-xl border-l-4 border-l-neonPurple"
+                                    >
+                                        <h4 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Availability</h4>
+                                        <ul className="space-y-2 text-sm text-white">
+                                            <li className="flex items-center gap-2">
+                                                <i className="far fa-calendar-check text-neonPurple"></i> 5–6 days per week
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <i className="fas fa-running text-neonPurple"></i> Immediate joining available
+                                            </li>
+                                        </ul>
+                                    </motion.div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Contact = () => {
+            return (
+                <section className="py-24 relative z-10" id="contact">
+                    <div className="max-w-4xl mx-auto px-6 text-center">
+                        <SectionHeader title="Get In Touch" subtitle="Ready to collaborate or have an opportunity? Let's connect." />
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                            <motion.a
+                                href="#"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="glass-panel p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group hover:-translate-y-2 transition-transform duration-300"
+                            >
+                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-neonCyan/10 transition-colors">
+                                    <i className="fas fa-map-marker-alt text-2xl text-gray-400 group-hover:text-neonCyan transition-colors"></i>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Location</h4>
+                                    <p className="text-sm text-gray-400">Rawalpindi, Punjab, Pakistan</p>
+                                </div>
+                            </motion.a>
+
+                            <motion.a
+                                href="tel:+920000000000"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.1 }}
+                                className="glass-panel p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group hover:-translate-y-2 transition-transform duration-300"
+                            >
+                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-neonPurple/10 transition-colors">
+                                    <i className="fas fa-phone-alt text-2xl text-gray-400 group-hover:text-neonPurple transition-colors"></i>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Phone</h4>
+                                    <p className="text-sm text-gray-400">+92312-8502242</p>
+                                </div>
+                            </motion.a>
+
+                            <motion.a
+                                href="mailto:m.bilalswati06@gmail.com"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.2 }}
+                                className="glass-panel p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group hover:-translate-y-2 transition-transform duration-300"
+                            >
+                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-neonCyan/10 transition-colors">
+                                    <i className="fas fa-envelope text-2xl text-gray-400 group-hover:text-neonCyan transition-colors"></i>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Email</h4>
+                                    <p className="text-sm text-gray-400">m.bilalswati06@gmail.com</p>
+                                </div>
+                            </motion.a>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Footer = () => {
+            return (
+                <footer className="py-8 relative z-10 border-t border-white/5 glass-panel rounded-none">
+                    <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div className="text-2xl font-bold font-outfit tracking-wider text-white">
+                            MB<span className="text-neonPurple">.</span>
+                        </div>
+                        <p className="text-sm text-gray-400 text-center md:text-left">
+                            Built with passion for <span className="text-neonCyan font-medium">AI</span>, <span className="text-neonPurple font-medium">technology</span>, and continuous growth.
+                        </p>
+                        <div className="flex gap-4">
+                            <a href="https://www.linkedin.com/in/muhammad-bilal-bsai" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                                <i className="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://github.com/Alligator-crypto" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                                <i className="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </footer>
+            );
+        };
+
+        const Projects = () => {
+            const projects = [
+                { name: "Library Management System", tech: "C++", icon: "fa-book-open" },
+                { name: "Blood Bank Management System", tech: "C++ / Database", icon: "fa-hand-holding-medical" },
+                { name: "Personal Portfolio Website", tech: "React, Tailwind, Framer Motion", icon: "fa-globe" }
+            ];
+
+            return (
+                <section className="py-24 relative z-10" id="projects">
+                    <div className="max-w-6xl mx-auto px-6">
+                        <SectionHeader title="Featured Projects" subtitle="Academic and personal projects I've built." />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {projects.map((project, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="glass-panel p-8 rounded-2xl group hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neonCyan to-neonPurple opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="w-14 h-14 rounded-full bg-darkBg border border-gray-800 flex items-center justify-center mb-6 group-hover:border-neonCyan transition-colors duration-300 group-hover:shadow-[0_0_15px_rgba(0,243,255,0.3)]">
+                                        <i className={`fas ${project.icon} text-xl text-gray-400 group-hover:text-neonCyan transition-colors duration-300`}></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-white mb-2">{project.name}</h3>
+                                    <p className="text-neonPurple text-sm font-medium"><i className="fas fa-code mr-2"></i> {project.tech}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Technologies = () => {
+            const techs = [
+                "C++", "HTML", "JavaScript", "Git & GitHub", "AI Fundamentals", "Problem Solving"
+            ];
+
+            return (
+                <section className="py-24 relative z-10" id="technologies">
+                    <div className="max-w-6xl mx-auto px-6">
+                        <SectionHeader title="Technologies & Skills" subtitle="The tools and concepts I am currently mastering." />
+                        <div className="flex flex-wrap justify-center gap-4">
+                            {techs.map((tech, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.05 }}
+                                    className="glass-panel px-6 py-3 rounded-full flex items-center gap-3 hover:border-neonCyan hover:shadow-[0_0_15px_rgba(0,243,255,0.2)] transition-all cursor-default"
+                                >
+                                    <i className="fas fa-microchip text-neonPurple"></i>
+                                    <span className="text-gray-200 font-medium">{tech}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Achievements = () => {
+            const achievements = [
+                "BS Artificial Intelligence Student",
+                "Built multiple academic projects",
+                "Learning modern web technologies",
+                "Strong communication and teamwork skills"
+            ];
+
+            return (
+                <section className="py-24 relative z-10" id="achievements">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <SectionHeader title="Achievements & Milestones" subtitle="Key highlights of my academic and personal growth." />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {achievements.map((achievement, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="glass-panel p-6 rounded-xl flex items-start gap-4 hover:bg-white/5 transition-colors border-l-4 border-l-neonPurple group"
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-neonPurple/10 flex items-center justify-center flex-shrink-0 group-hover:bg-neonPurple/20 transition-colors">
+                                        <i className="fas fa-trophy text-neonPurple"></i>
+                                    </div>
+                                    <p className="text-gray-200 font-medium mt-2">{achievement}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const SocialLinks = () => {
+            const links = [
+                { name: "GitHub", icon: "fab fa-github", url: "https://github.com/Alligator-crypto", color: "hover:text-white hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.5)]" },
+                { name: "LinkedIn", icon: "fab fa-linkedin-in", url: "https://www.linkedin.com/in/muhammad-bilal-bsai", color: "hover:text-[#0a66c2] hover:border-[#0a66c2] hover:shadow-[0_0_15px_rgba(10,102,194,0.5)]" },
+                { name: "Email", icon: "fas fa-envelope", url: "mailto:m.bilalswati06@gmail.com", color: "hover:text-neonCyan hover:border-neonCyan hover:shadow-[0_0_15px_rgba(0,243,255,0.5)]" }
+            ];
+
+            return (
+                <section className="py-12 relative z-10" id="social">
+                    <div className="max-w-4xl mx-auto px-6 text-center">
+                        <div className="flex justify-center gap-6">
+                            {links.map((link, index) => (
+                                <motion.a
+                                    key={index}
+                                    href={link.url}
+                                    initial={{ opacity: 0, scale: 0 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.1, type: "spring", stiffness: 200 }}
+                                    className={`w-16 h-16 rounded-full glass-panel flex items-center justify-center text-2xl text-gray-400 transition-all duration-300 ${link.color}`}
+                                    title={link.name}
+                                >
+                                    <i className={link.icon}></i>
+                                </motion.a>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const App = () => {
+            return (
+                <div className="relative">
+                    <FloatingParticles />
+                    <Navigation />
+                    <Hero />
+                    <About />
+                    <Skills />
+                    <Technologies />
+                    <Education />
+                    <Achievements />
+                    <Projects />
+                    <ExperienceAndStrengths />
+                    <Contact />
+                    <SocialLinks />
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
